@@ -17,11 +17,17 @@
 它可以实现：
 
 1.用户可以和VO对话交流聊天。
+
 2.用户可以用自然语言和本地mysql数据库交互**（NL2SQL,Natural Language to SQL)。**
+
 3.用户可以用自然语言实现**本地python编程。**
+
 4.用户可以用自然语言实现**python绘图**。
+
 5.用户可以用自然语言和**github交互**。
+
 6.用户可以用自然语言请教VO，如果VO内部知识没有答案，会自动调用**web搜索**功能获取最新消息，然后总结回复用户。
+
 7.用户可以用VO提供的**Deep Research**功能，实现某知识的深度研究，成为用户科研和学习路上的好帮手。
 
 ---
@@ -31,12 +37,22 @@
 ![1748438542359](images/1748438542359.png)
 
 我们的设计思路为：
+
 **1.对话功能：**大模型本身就具有和用户对话交流功能，我们在messages里保存历史的20条信息（短期记忆）。
+
 **2.NL2SQL功能:**一方面，利用大模型的原生Function Calling能力，我们设计一个sql_inter_tool（负责数据库查询任务）和extract_data_tool（负责提取数据库的某一张表到python的dataframe类型的变量里）；另一方面，使用python语言的pymysql库连接到mysql以及使用python语言的globals()函数监测python本地环境变量。两者结合即可实现NL2SQL。
+
 **3.使用自然语言进行本地python编程和本地python绘图功能：**一方面，利用大模型的原生Function Calling能力，我们设计一个python_inter_tool（负责除了python编程绘图之外的所有python编程任务）和fig_inter_tool（负责python编程绘图任务）；另一方面，使用python语言的常见第三方库（比如numpy,pandas,matplotlib等）以及使用python语言的globals()函数监测python本地环境变量。两者结合即可实现使用自然语言进行本地python编程和本地python绘图。
+
 **4.连接github功能：**先利用google search搜索和用户问题相关的github项目地址，然后利用大模型的原生Function Calling能力，设计一个get_answer_github_tool（利用github token连接到github）。
+
 **5.web search功能：**利用大模型的原生Function Calling能力，设计一个get_answer_tool（利用bocha search api连接到web）。
-**6.Deep Research功能：**VO提供了**两种**实现Deep Research功能的方式。**第一种**是基于bocha搜索的Deep Research实现，利用Prompt构建技巧，用户告诉大模型研究对象后，先构建一个让大模型分析研究对象后追问用户需求的prompt喂给大模型，用户回复需求后，再构建一个大模型根据用户的研究对象和新提供的需求进行研究的prompt喂给大模型，大模型会利用我们之前构建的一系列tools(sql_inter_tool、extract_data_tool、python_inter_tool、fig_inter_tool、get_answer_github_tool、get_answer_tool)来生成研究报告，由于get_answer_tool是根据bocha搜索构建的工具，而深入研究时基本上一定会用到该工具，所以我们称这种方式的实现为基于bocha搜索的Deep Research。**第二种**是基于OpenAI-Agents-SDK框架，直接使用其内置的web search工具和封装好的Multi Agents开发流程实现的Deep Research，我们利用三个Agent串联工作，分别是planner_agent,search_agent和writer_agent，planner_agent负责提前规划好需要搜索的关键词和搜索的原因推断，search_agent根据planner_agent提供的信息进行web搜索，writer_agent根据search_agent提供的信息总结撰写研究报告。
+
+**6.Deep Research功能：**VO提供了**两种**实现Deep Research功能的方式。
+
+**第一种**是基于bocha搜索的Deep Research实现，利用Prompt构建技巧，用户告诉大模型研究对象后，先构建一个让大模型分析研究对象后追问用户需求的prompt喂给大模型，用户回复需求后，再构建一个大模型根据用户的研究对象和新提供的需求进行研究的prompt喂给大模型，大模型会利用我们之前构建的一系列tools(sql_inter_tool、extract_data_tool、python_inter_tool、fig_inter_tool、get_answer_github_tool、get_answer_tool)来生成研究报告，由于get_answer_tool是根据bocha搜索构建的工具，而深入研究时基本上一定会用到该工具，所以我们称这种方式的实现为基于bocha搜索的Deep Research。
+
+**第二种**是基于OpenAI-Agents-SDK框架，直接使用其内置的web search工具和封装好的Multi Agents开发流程实现的Deep Research，我们利用三个Agent串联工作，分别是planner_agent,search_agent和writer_agent，planner_agent负责提前规划好需要搜索的关键词和搜索的原因推断，search_agent根据planner_agent提供的信息进行web搜索，writer_agent根据search_agent提供的信息总结撰写研究报告。
 
 ----
 
