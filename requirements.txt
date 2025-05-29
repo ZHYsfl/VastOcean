@@ -1,0 +1,29 @@
+# Core AI and Language Model Interaction
+openai==1.67.0
+tiktoken==0.9.0
+
+# OpenAI Agents SDK (ensure this is the correct package name and version from your freeze)
+openai-agents==0.0.5 # Or the actual package name for 'from agents import ...'
+
+# Data Validation and Structures
+pydantic==2.11.4
+
+# Data Handling and Numerics
+numpy==2.2.4
+pandas==2.2.3
+
+# Database Interaction
+pymysql==1.1.1
+
+# HTTP Requests
+requests==2.32.3
+
+# Environment Variable Management
+python-dotenv==1.0.1
+
+# Asynchronous Operations
+nest-asyncio==1.6.0 # For allowing nested asyncio event loops (e.g., in Jupyter)
+
+# Plotting and Visualization
+matplotlib==3.10.1
+seaborn==0.13.2
